@@ -36,12 +36,22 @@ A API estará disponível em `http://localhost:8080`. Você pode utilizar ferram
 
 ### Endpoints Principais
 
-- `GET /api/transactions`: Retorna todas as transações.
-- `POST /api/transactions`: Cria uma nova transação.
-- `GET /api/transactions/{id}`: Retorna uma transação específica por ID.
-- `PUT /api/transactions/{id}`: Atualiza uma transação específica por ID.
-- `DELETE /api/transactions/{id}`: Deleta uma transação específica por ID.
+#### Clientes
+- `POST /api/v1/clientes`: Cria um novo cliente.
+- `PUT /api/v1/clientes`: Atualiza um cliente específico por ID.
+- `GET /api/v1/clientes`: Retorna todos os clientes.
+- `GET /api/v1/clientes/{id}`: Retorna um cliente específico por ID.
+- `DELETE /api/v1/clientes/{id}`: Deleta um cliente específico por ID.
 
+#### Transações
+- `POST /api/v1/transacoes`: Cria uma nova transação.
+- `DELETE /api/v1/transacoes/{id}`: Deleta uma transação específica por ID.
+
+#### User
+- `POST /api/v1/save`: Cria um novo User.
+- `GET /api/v1/users`: Retorna todos os users.
+- `POST /api/v1/login`: Cria tokens para autenticação JWT.
+- `POST /api/v1/refreshToken`: Faz um refresh dos tokens já criados.
 ## Licença
 
 Este projeto é de propriedade de Matheus de Oliveira Simoes. Todos os direitos reservados.
