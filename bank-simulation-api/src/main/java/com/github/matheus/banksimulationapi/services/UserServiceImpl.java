@@ -1,7 +1,7 @@
 package com.github.matheus.banksimulationapi.services;
 
-import com.github.matheus.banksimulationapi.dtos.UserRequest;
-import com.github.matheus.banksimulationapi.dtos.UserResponse;
+import com.github.matheus.banksimulationapi.dtos.UserRequestDTO;
+import com.github.matheus.banksimulationapi.dtos.UserResponseDTO;
 import com.github.matheus.banksimulationapi.model.ContaBancaria;
 import com.github.matheus.banksimulationapi.model.User;
 import com.github.matheus.banksimulationapi.repositories.UserRepository;
@@ -22,8 +22,6 @@ import java.util.Random;
 @Service
 public class UserServiceImpl implements UserService {
 
-    public static final int LENGTH_AGENCIA = 4;
-    public static final int LENGHT_NUMERO = 6;
     @Autowired
     private UserRepository userRepository;
 
@@ -31,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserResponse saveUser(UserRequest userRequest) {
+    public UserResponseDTO saveUser(UserRequestDTO userRequest) {
         User savedUser = null;
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -57,49 +55,30 @@ public class UserServiceImpl implements UserService {
             if (oldUser != null) {
                 throw new RuntimeException("Usuario com o email: " + userRequest.getEmail() + " já existe!!!");
             }
-            setContaBancaria(user);
             savedUser = userRepository.save(user);
         }
         userRepository.refresh(savedUser);
-        UserResponse userResponse = modelMapper.map(savedUser, UserResponse.class);
+        UserResponseDTO userResponse = modelMapper.map(savedUser, UserResponseDTO.class);
         return userResponse;
     }
 
     @Override
-    public UserResponse getUser() {
+    public UserResponseDTO getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetail = (UserDetails) authentication.getPrincipal();
         String usernameFromAccessToken = userDetail.getUsername();
         User user = userRepository.findByEmail(usernameFromAccessToken);
-        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+        UserResponseDTO userResponse = modelMapper.map(user, UserResponseDTO.class);
         return userResponse;
     }
 
     @Override
-    public List<UserResponse> getAllUser() {
+    public List<UserResponseDTO> getAllUser() {
         List<User> users = (List<User>) userRepository.findAll();
-        Type setOfDTOsType = new TypeToken<List<UserResponse>>() {
+        Type setOfDTOsType = new TypeToken<List<UserResponseDTO>>() {
         }.getType();
-        List<UserResponse> userResponses = modelMapper.map(users, setOfDTOsType);
+        List<UserResponseDTO> userResponses = modelMapper.map(users, setOfDTOsType);
         return userResponses;
     }
-
-    private static void setContaBancaria(User user) {
-        user.setContaBancaria(ContaBancaria.builder()
-                .agencia(generateNumerosAleatorioesString(LENGTH_AGENCIA))
-                .numero(generateNumerosAleatorioesString(LENGHT_NUMERO))
-                .build());
-    }
-
-    private static String generateNumerosAleatorioesString(int quantidadeNumeros) {
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
-            int num = random.nextInt(10);
-            sb.append(num);
-        }
-        return sb.toString();
-    }
-
 
 }

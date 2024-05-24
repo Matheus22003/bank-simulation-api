@@ -2,6 +2,7 @@ package com.github.matheus.banksimulationapi.helpers;
 
 import com.github.matheus.banksimulationapi.model.User;
 import com.github.matheus.banksimulationapi.model.UserRole;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

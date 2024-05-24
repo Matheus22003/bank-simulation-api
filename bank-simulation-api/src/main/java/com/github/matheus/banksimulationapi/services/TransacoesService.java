@@ -1,50 +1,41 @@
 package com.github.matheus.banksimulationapi.services;
 
+import com.github.matheus.banksimulationapi.dtos.ClienteResponseDTO;
 import com.github.matheus.banksimulationapi.dtos.TransacaoDto;
-import com.github.matheus.banksimulationapi.dtos.UserResponse;
+import com.github.matheus.banksimulationapi.model.Cliente;
+import com.github.matheus.banksimulationapi.model.ContaBancaria;
 import com.github.matheus.banksimulationapi.model.Transacao;
-import com.github.matheus.banksimulationapi.model.User;
 import com.github.matheus.banksimulationapi.model.enums.TipoTransacao;
-import com.github.matheus.banksimulationapi.repositories.TransacoesRepository;
-import com.github.matheus.banksimulationapi.repositories.UserRepository;
+import com.github.matheus.banksimulationapi.repositories.ClienteRepository;
+import com.github.matheus.banksimulationapi.repositories.ContaBancariaRepository;
+import com.github.matheus.banksimulationapi.repositories.TransacaoRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class TransacoesService {
 
     @Autowired
-    private UserService userService;
+    private ClienteRepository clienteRepository;
+    @Autowired
+    private ContaBancariaRepository contaBancariaRepository;
 
     @Autowired
-    private TransacoesRepository transacoesRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private TransacaoRepository transacaoRepository;
     private ModelMapper modelMapper = new ModelMapper();
 
-    public UserResponse transacionar(TransacaoDto transacaoDto) {
-        Transacao mapTransacao = modelMapper.map(transacaoDto, Transacao.class);
-        mapTransacao.setTipoTransacao(getTipoTransacao(mapTransacao));
-        User savedUser = userRepository.findByEmail(transacaoDto.getEmail());
-        if (savedUser == null) {
-            throw new RuntimeException("Usuário não encontrado");
+    public ClienteResponseDTO transacionar(TransacaoDto transacaoDto) {
+        Cliente cliente = clienteRepository.findByEmail(transacaoDto.getEmail());
+        if (cliente == null) {
+            throw new RuntimeException("Cliente não encontrado");
         }
-        mapTransacao.setContaBancaria(savedUser.getContaBancaria());
-        savedUser.getContaBancaria().getTransacaos().add(mapTransacao);
-        savedUser = userRepository.save(savedUser);
-        return modelMapper.map(savedUser, UserResponse.class);
-    }
-
-    public List<TransacaoDto> getAllTransacoes() {
-        return transacoesRepository.findAllByContaBancariaId(userService.getUser().getContaBancaria().getId())
-                .stream().map(transacao -> modelMapper.map(transacao, TransacaoDto.class)).collect(toList());
+        Transacao map = modelMapper.map(transacaoDto, Transacao.class);
+        map.setTipoTransacao(getTipoTransacao(map));
+//        map.setContaBancaria(cliente.getContaBancaria());
+        cliente.getContaBancaria().getTransacaos().add(map);
+        Cliente save = clienteRepository.save(cliente);
+        return modelMapper.map(save, ClienteResponseDTO.class);
     }
 
     private TipoTransacao getTipoTransacao(Transacao transacao) {
@@ -55,4 +46,11 @@ public class TransacoesService {
     }
 
 
+    public void deleteById(Long id) {
+        Transacao transacao = transacaoRepository.findById(id).orElseThrow(() -> new RuntimeException("Transação não encontrada"));
+        ContaBancaria byTransacaosIsContaining = contaBancariaRepository.findByTransacaosIsContaining(transacao);
+        byTransacaosIsContaining.getTransacaos().stream().filter(transacao1 -> transacao1.getId().equals(transacao.getId())).findFirst().ifPresent(transacao1 -> byTransacaosIsContaining.getTransacaos().remove(transacao1));
+        contaBancariaRepository.save(byTransacaosIsContaining);
+        transacaoRepository.delete(transacao);
+    }
 }

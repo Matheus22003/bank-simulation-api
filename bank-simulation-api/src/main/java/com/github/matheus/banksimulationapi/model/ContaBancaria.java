@@ -23,10 +23,9 @@ public class ContaBancaria {
     @Length(min = 4, max = 4)
     private String agencia;
 
-    @Length(min = 4, max = 4)
     private String numero;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "contaBancaria")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Transacao> transacaos = new ArrayList<>();
 
 }

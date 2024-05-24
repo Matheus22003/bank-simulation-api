@@ -1,6 +1,5 @@
 package com.github.matheus.banksimulationapi.dtos;
 
-import com.github.matheus.banksimulationapi.model.Endereco;
 import com.github.matheus.banksimulationapi.model.UserRole;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class UserRequest {
+public class UserRequestDTO {
 
     private Long id;
 
@@ -31,9 +30,6 @@ public class UserRequest {
     @NotNull
     private String password;
 
-    @NotNull
-    private Endereco endereco;
-    
     private Set<UserRole> roles;
 
 }

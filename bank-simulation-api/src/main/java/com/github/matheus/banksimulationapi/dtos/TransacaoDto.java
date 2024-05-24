@@ -10,11 +10,15 @@ import lombok.*;
 @Builder
 @ToString
 public class TransacaoDto {
+
     private String descricao;
+    
     @NotNull
     private Double valor;
+
     @NotNull
     private String email;
 
     private TipoTransacao tipoTransacao;
+
 }

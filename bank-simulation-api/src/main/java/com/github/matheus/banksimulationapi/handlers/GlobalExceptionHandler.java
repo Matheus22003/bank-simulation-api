@@ -18,8 +18,8 @@ import java.util.Objects;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDetails> handleRuntimeException(RuntimeException ex, WebRequest request) {
+    @ExceptionHandler({Exception.class})
+    public ResponseEntity<ErrorDetails> handleRuntimeException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), "", request.getDescription(false));
         if (Objects.nonNull(ex.getCause())) {
             errorDetails.setMessage(ex.getCause().getMessage());

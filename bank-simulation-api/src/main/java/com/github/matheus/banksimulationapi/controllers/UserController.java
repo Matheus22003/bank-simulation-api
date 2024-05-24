@@ -36,9 +36,9 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping(value = "/save")
-    public ResponseEntity<UserResponse> saveUser(@RequestBody @Valid UserRequest userRequest) {
+    public ResponseEntity<UserResponseDTO> saveUser(@RequestBody @Valid UserRequestDTO userRequest) {
         try {
-            UserResponse userResponse = userService.saveUser(userRequest);
+            UserResponseDTO userResponse = userService.saveUser(userRequest);
             return ok(userResponse);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -47,9 +47,9 @@ public class UserController {
 
     @GetMapping("/users")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         try {
-            List<UserResponse> userResponses = userService.getAllUser();
+            List<UserResponseDTO> userResponses = userService.getAllUser();
             return ok(userResponses);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -58,9 +58,9 @@ public class UserController {
 
 
     @GetMapping("/profile")
-    public ResponseEntity<UserResponse> getUserProfile() {
+    public ResponseEntity<UserResponseDTO> getUserProfile() {
         try {
-            UserResponse userResponse = userService.getUser();
+            UserResponseDTO userResponse = userService.getUser();
             return ok().body(userResponse);
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -25,8 +25,10 @@ public class Transacao {
 
     private String descricao;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "conta_bancaria_id", referencedColumnName = "id")
-    private ContaBancaria contaBancaria;
+    private Boolean ativo = true;
+
+//    @JsonIgnore
+//    @ManyToOne(cascade = CascadeType.DETACH)
+//    @JoinColumn(name = "conta_bancaria_id", referencedColumnName = "id")
+//    private ContaBancaria contaBancaria;
 }
